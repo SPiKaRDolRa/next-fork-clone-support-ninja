@@ -23,7 +23,6 @@ export default function GetStartedPage() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
