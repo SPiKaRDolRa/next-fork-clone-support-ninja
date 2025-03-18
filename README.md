@@ -48,3 +48,29 @@ Highlight Step ปัจจุบัน ด้วย text-green-900
 มี Dropdown ให้เลือก จำนวนคนที่ต้องการ
 มี Textarea ให้ใส่ Business Goals
 ```
+
+---
+
+## ⚙️ State Management (Zustand)
+- ใช้ Zustand จัดการ step, selectedOptions, และ formData
+- ฟอร์มทั้งหมดอัปเดตค่าผ่าน Zustand ทำให้ ข้อมูลไม่หายเมื่อเปลี่ยน Step
+
+---
+
+## 📝 Form Validation (React Hook Form + Zod)
+✅ Validation Rules
+- First Name / Last Name: ต้องไม่ว่าง (.min(1))
+- Email: ต้องเป็นอีเมลที่ถูกต้อง (.email())
+- Phone Number: ต้องเป็น XXX-XXX-XXXX (.regex())
+```bash
+// ใช้ Zod สำหรับ Validation
+const formSchema = z.object({
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, "Invalid phone number"),
+});
+```
+
+- ไฟล์ที่มี zod แต่ติดจะอยู่ใน /get-started/temp-zod.tsx
+- ไฟล์ที่ zod ใช้ นั่นคือ store ก็อยู่ใน /store/useFormStore.ts
