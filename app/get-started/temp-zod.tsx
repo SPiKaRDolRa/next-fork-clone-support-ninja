@@ -1,0 +1,148 @@
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useFormStore } from "store/useFormStore";
+
+// 1️⃣ สร้าง Zod Schema สำหรับ validation
+const formSchema = z.object({
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, "Invalid phone number"),
+  teamSize: z.string().min(1, "Please select a team size"),
+  scaleUpTime: z.string().min(1, "Please select a scale-up time"),
+  goals: z.string().min(5, "Please provide your outsourcing goals"),
+  referral: z.string().optional(),
+});
+
+export default function GetStartedPage() {
+  const { step, setStep, selectedOptions, setSelectedOptions, updateFormData } = useFormStore();
+
+  // 2️⃣ ตั้งค่า React Hook Form
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: useFormStore.getState().formData, // ดึงค่าเริ่มต้นจาก Zustand
+  });
+
+  const options = [
+    "Customer Experience",
+    "Customer Conversion",
+    "Customer Onboarding",
+    "Customer Support",
+    "Technical Customer Support",
+    "Customer Renewals",
+    "Content Moderation",
+    "Data Processing",
+    "Finance & Accounting",
+    "N/A - Job Interest",
+  ];
+
+  const steps = ["SUPPORT TYPE(S)", "ACCOUNT INFO", "GROW YOUR TEAM"];
+
+  const handleCheckboxChange = (option: string) => {
+    setSelectedOptions((prev) =>
+      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
+    );
+  };
+
+  const onNext = (data: any) => {
+    if (step === 1 && selectedOptions.length === 0) {
+      alert("Please select at least one option.");
+      return;
+    }
+    if (step < 3) {
+      updateFormData(data); // อัปเดต Zustand state
+      setStep(step + 1);
+    } else {
+      alert("Form submitted successfully! 🚀");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f3dfcf] flex flex-col items-center py-12 px-6">
+      <h1 className="text-5xl font-serif font-bold text-center text-[#2b2c30]">
+        Your Dream Team Starts Here
+      </h1>
+      <p className="text-lg text-center text-[#2b2c30] mt-2">
+        Build your expert team here:
+      </p>
+
+      <div className="bg-white shadow-md rounded-lg p-8 mt-8 max-w-xl w-full">
+        {/* Step Progress Bar */}
+        <div className="mb-6">
+          <div className="flex justify-between text-sm font-semibold text-[#2b2c30]">
+            {steps.map((label, index) => (
+              <span key={index} className={index + 1 === step ? "text-green-900" : ""}>
+                {label}
+              </span>
+            ))}
+          </div>
+          <div className="relative w-full h-2 bg-gray-300 rounded-full mt-2">
+            <div
+              className="absolute h-2 bg-green-900 rounded-full transition-all duration-300"
+              style={{ width: `${(step / steps.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Form */}
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onNext)}>
+          {step === 1 && (
+            <>
+              <p className="text-[#2b2c30] font-semibold">
+                What area of your business are you looking to outsource?*
+              </p>
+              <div className="grid grid-cols-2 gap-y-3">
+                {options.map((option) => (
+                  <label key={option} className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      className="w-5 h-5 border-gray-300 rounded"
+                      checked={selectedOptions.includes(option)}
+                      onChange={() => handleCheckboxChange(option)}
+                    />
+                    <span className="text-[#2b2c30]">{option}</span>
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <input {...register("firstName")} placeholder="First Name" className="border p-2 w-full" />
+              {errors.firstName && <p className="text-red-600">{errors.firstName.message}</p>}
+
+              <input {...register("lastName")} placeholder="Last Name" className="border p-2 w-full" />
+              {errors.lastName && <p className="text-red-600">{errors.lastName.message}</p>}
+
+              <input {...register("email")} placeholder="Email" className="border p-2 w-full" />
+              {errors.email && <p className="text-red-600">{errors.email.message}</p>}
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <select {...register("teamSize")} className="border p-2 w-full">
+                <option value="">Please Select</option>
+                <option value="1-5">1-5</option>
+                <option value="6-10">6-10</option>
+              </select>
+              {errors.teamSize && <p className="text-red-600">{errors.teamSize.message}</p>}
+            </>
+          )}
+
+          <button type="submit" className="mt-4 bg-green-900 text-white font-semibold text-lg py-3 px-6 rounded-full w-full">
+            {step === 3 ? "Grow My Team" : "NEXT >"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
