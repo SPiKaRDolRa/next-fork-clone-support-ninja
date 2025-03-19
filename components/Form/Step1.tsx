@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useFormStore } from "store/useFormStore";
 
 const options = [
@@ -11,14 +11,13 @@ const options = [
     "Other"
 ];
 
-const Step1 = ({ onNext }: { onNext: () => void }) => {
-    const { selectedOptions, setSelectedOptions, setStep } = useFormStore(); // ✅ ดึงค่าให้ถูกต้อง
+const Step1Content = ({ onNext }: { onNext: () => void }) => {
+    const { selectedOptions, setSelectedOptions, setStep } = useFormStore();
     const searchParams = useSearchParams();
     const router = useRouter();
 
     useEffect(() => {
-        const queryString = searchParams?.toString();
-        if (!queryString) return; 
+        if (!searchParams) return; // ป้องกัน error ถ้า searchParams ยังโหลดไม่เสร็จ
 
         const queryKey = Array.from(searchParams.keys())[0] ?? "";
 
@@ -28,29 +27,19 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
         const matchedOption = options.find(option => formatOption(option) === queryKey);
 
         if (matchedOption) {
-            setSelectedOptions([matchedOption]); // ✅ อัปเดต Zustand state
+            setSelectedOptions([matchedOption]); 
             setStep(2); // ✅ ข้ามไป Step2
         } else {
             router.push("/get-started");
         }
     }, [searchParams, setSelectedOptions, setStep, router]);
 
-    const handleCheckboxChange = (option: string) => {
-        setSelectedOptions(
-            selectedOptions.includes(option)
-                ? selectedOptions.filter((o) => o !== option)
-                : [...selectedOptions, option]
-        );
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (selectedOptions.length === 0) return;
-        onNext();
-    };
-
     return (
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-4" onSubmit={(e) => {
+            e.preventDefault();
+            if (selectedOptions.length === 0) return;
+            onNext();
+        }}>
             <p className="text-[#2b2c30] font-semibold">What area of your business are you looking to outsource?*</p>
             <div className="grid grid-cols-2 gap-y-3">
                 {options.map((option) => (
@@ -59,7 +48,11 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
                             type="checkbox"
                             className="w-5 h-5 border-gray-300 rounded"
                             checked={selectedOptions.includes(option)}
-                            onChange={() => handleCheckboxChange(option)}
+                            onChange={() => setSelectedOptions(
+                                selectedOptions.includes(option)
+                                    ? selectedOptions.filter((o) => o !== option)
+                                    : [...selectedOptions, option]
+                            )}
                         />
                         <span className="text-[#2b2c30]">{option}</span>
                     </label>
@@ -71,5 +64,12 @@ const Step1 = ({ onNext }: { onNext: () => void }) => {
         </form>
     );
 };
+
+// ✅ ห่อด้วย Suspense เพื่อให้ `useSearchParams()` ใช้งานได้
+const Step1 = ({ onNext }: { onNext: () => void }) => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <Step1Content onNext={onNext} />
+    </Suspense>
+);
 
 export default Step1;
