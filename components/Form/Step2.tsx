@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "components/Form/InputField";
@@ -21,18 +22,16 @@ type Step2FormData = z.infer<typeof step2Schema>;
 
 const Step2 = ({ onNext }: { onNext: () => void }) => {
     const { formData, setFormData } = useFormStore();
+    const [contactMethod, setContactMethod] = useState(formData.referral || ""); // ✅ ใช้ useState ควบคุมค่า
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
         formState: { errors },
     } = useForm<Step2FormData>({
         resolver: zodResolver(step2Schema),
         defaultValues: formData,
     });
-
-    const contactMethod = watch("contactMethod");
 
     const onSubmit = (data: Step2FormData) => {
         setFormData(data);
@@ -42,23 +41,46 @@ const Step2 = ({ onNext }: { onNext: () => void }) => {
     return (
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
-                <InputField label="First Name" placeholder="Your First Name" {...register("firstName")} />
-                <InputField label="Last Name" placeholder="Your Last Name" {...register("lastName")} />
+                <InputField 
+                    label="First Name" 
+                    placeholder="Your First Name"
+                    value={formData.firstName} 
+                    {...register("firstName")} 
+                />
+                <InputField 
+                    label="Last Name" 
+                    placeholder="Your Last Name"
+                    value={formData.lastName} 
+                    {...register("lastName")} 
+                />
             </div>
 
             <RadioButtonGroup
                 label="How would you like to be contacted?*"
                 options={["Phone", "Email"]}
                 selectedValue={contactMethod}
-                onChange={(value) => setValue("contactMethod", value)}
+                onChange={(value) => {
+                    setContactMethod(value); // ✅ อัปเดตค่า state ของ radio
+                    setValue("contactMethod", value as "Phone" | "Email");
+                }}
             />
 
             {contactMethod === "Email" && (
-                <InputField label="Work Email" {...register("email")} />
+                <InputField 
+                    label="Work Email" 
+                    placeholder="me@company.com"
+                    value={formData.email} 
+                    {...register("email")} 
+                />
             )}
 
             {contactMethod === "Phone" && (
-                <InputField label="Phone Number" {...register("phone")} />
+                <InputField 
+                    label="Phone Number" 
+                    placeholder="512-111-1111"
+                    value={formData.phone} 
+                    {...register("phone")} 
+                />
             )}
 
             {errors.contactMethod && <p className="text-red-600 text-sm mt-2">{errors.contactMethod.message}</p>}
