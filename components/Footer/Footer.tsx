@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         {/* Logo Section */}
         <div className="flex justify-between items-center border-b border-gray-400 pb-8">
-          <Image src="/logo.svg" alt="Support Ninja" width={200} height={40} />
+          <Image src="/images/support_ninja_full_logo.svg" alt="SupportNinja Logo" height={40} width={200} />
           <Link href="#" className="bg-red-500 text-white px-6 py-3 rounded-full flex items-center">
             Get started <span className="ml-2">➡</span>
           </Link>

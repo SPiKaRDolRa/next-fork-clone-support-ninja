@@ -23,22 +23,25 @@ const Hero = () => {
       <p className="text-md text-[#2B2C30]">Choose as many as you need.</p>
 
       {/* Options */}
-      <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 px-4 md:px-12">
-        {[
-          { img: "/customer-experience.svg", title: "Customer Experience" },
-          { img: "/customer-support.svg", title: "Customer Support" },
-          { img: "/technical-support.svg", title: "Technical Customer Support" },
-          { img: "/content-moderation.svg", title: "Content Moderation" },
-          { img: "/data-processing.svg", title: "Data Processing" },
-          { img: "/finance-accounting.svg", title: "Finance & Accounting" },
-        ].map((item, index) => (
-          <div key={index} className="relative bg-white bg-opacity-50 rounded-lg p-4 text-center shadow-md">
-            <img src={item.img} alt={item.title} className="mx-auto w-28 h-28" />
-            <p className="mt-4 font-bold text-[#2B2C30]">{item.title}</p>
-            <input type="checkbox" className="absolute top-3 right-3 w-5 h-5 border border-gray-500 rounded-md" />
-          </div>
-        ))}
+      <div className="flex w-full justify-center">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4/5">
+          {[
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/672cd9b56f4a3c4346ff88b7_6728efd16a3b5a8ca8f2a32e_Characer%20Illustration%20Single__Customer-Experience_Square_Filled.svg", title: "Customer Experience" },
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/64149f79022d0cd6fece4b65_filled_customer_success.webp", title: "Customer Support" },
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/64149f79022d0c3491ce4b63_filled_technical_support.webp", title: "Technical Customer Support" },
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/64149f79022d0cce61ce4b6b_filled_content_moderation.webp", title: "Content Moderation" },
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/64149f79022d0c1bd3ce4b69_filled_data_processing.webp", title: "Data Processing" },
+            { img: "https://cdn.prod.website-files.com/64149f79022d0c3ed8ce46e9/66ab870287012990781761a1_649438d904b97f8a9692a85a_Solution%253DE-mail%2520Support%252C%2520State%253DHover.webp", title: "Finance & Accounting" },
+          ].map((item, index) => (
+            <div key={index} className="relative hover:bg-white bg-[#FBEEE6] bg-opacity-50 rounded-lg p-4 text-center hover:shadow-md">
+              <img src={item.img} alt={item.title} className="mx-auto w-28 h-28" />
+              <p className="mt-4 font-bold text-[#2B2C30]">{item.title}</p>
+              <input type="checkbox" className="absolute top-3 right-3 w-5 h-5 border border-gray-500 rounded-md" />
+            </div>
+          ))}
+        </div>
       </div>
+     
 
       {/* Get Started Button */}
       <div className="mt-12">

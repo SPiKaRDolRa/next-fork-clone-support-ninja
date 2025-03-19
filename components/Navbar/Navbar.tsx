@@ -1,5 +1,6 @@
 "use client"
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -11,7 +12,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
         {/* Logo */}
         <Link href="/">
-          <img src="/logo.svg" alt="SupportNinja Logo" className="h-10" />
+          <Image src="/images/support_ninja_full_logo.svg" alt="SupportNinja Logo" height={40} width={200} />
         </Link>
 
         {/* Desktop Menu */}
